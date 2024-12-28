@@ -1,39 +1,141 @@
+
 # SimpleLock
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/simple_lock`. To experiment with that code, run `bin/console` for an interactive prompt.
+**SimpleLock** is a simple implementation of distributed locking using Ruby and Redis, designed to prevent deadlocks and ensure that concurrent processes can be managed efficiently.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add the gem to your `Gemfile`:
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem "simple_lock"
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+Then run the following command:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle install
+```
+
+Or, if you prefer installing it directly via terminal:
+
+```bash
+gem install simple_lock
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+### Simple Locking
+
+The main goal of **SimpleLock** is to provide a distributed locking mechanism. You can use the gem to ensure that only one process or thread can access a critical resource or operation at a time.
+
+### Basic Example
+
+```ruby
+# Using the simple lock with a key and expiration time (TTL)
+locked = SimpleLock.lock("my_unique_lock_key", 30)
+
+if locked
+  # Execute the critical operation
+  puts "Lock acquired! Executing critical operation."
+else
+  # Lock couldn't be acquired, another process already has it
+  puts "Failed to acquire lock, try again later."
+end
+```
+
+### Using with Block
+
+You can also use **SimpleLock** with a block, ensuring the lock will be automatically released when the block finishes, even if an exception occurs:
+
+```ruby
+SimpleLock.lock("my_unique_lock_key", 30) do |locked|
+  if locked
+    # Critical operation
+    puts "Safe operation is running."
+  else
+    # Couldn't acquire the lock
+    puts "Failed to acquire lock."
+  end
+end
+```
+
+### Unlocking
+
+You can manually release the lock using the `unlock` method:
+
+```ruby
+SimpleLock.unlock("my_unique_lock_key")
+```
+
+## Configuration
+
+You can configure various behaviors of the gem, such as the key prefix, retry count, retry delay, and more.
+
+### Example Configuration:
+
+```ruby
+SimpleLock.config.key_prefix = "myapp:"
+SimpleLock.config.retry_count = 5
+SimpleLock.config.retry_delay = 200 # in milliseconds
+SimpleLock.config.retry_jitter = 100 # in milliseconds
+SimpleLock.config.retry_proc = Proc.new { |attempt| attempt * 100 } # Exponential backoff
+```
+
+## Features
+
+- **Distributed locking and unlocking** with Redis.
+- **Automatic retry** with increasing delay and jitter, useful for high-concurrency systems.
+- **Safe unlocking** even in case of failure.
+- **Low latency** and easy integration.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After cloning the repository, install dependencies:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```bash
+bin/setup
+```
+
+Run tests:
+
+```bash
+rake spec
+```
+
+To interact with the code in the console:
+
+```bash
+bin/console
+```
+
+To install the gem locally:
+
+```bash
+bundle exec rake install
+```
+
+### Releasing a New Version
+
+1. Update the version number in `lib/simple_lock/version.rb`.
+2. Run the command to release the version:
+
+```bash
+bundle exec rake release
+```
+
+This will create a Git tag, push the code, and upload the `.gem` file to RubyGems.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/simple_lock.
+Contributions are welcome! Open an issue or submit a pull request on the [GitHub repository](https://github.com/caiodsc/simple_lock).
+
+1. Fork the project.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Commit your changes (`git commit -am 'Add new feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Create a new Pull Request.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the MIT License.
