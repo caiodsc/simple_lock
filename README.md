@@ -60,6 +60,14 @@ else
 end
 ```
 
+### Unlocking
+
+You can manually release the lock using the `unlock` method:
+
+```ruby
+SimpleLock.unlock("my_unique_lock_key")
+```
+
 ### Using with Block
 
 You can also use **SimpleLock** with a block, ensuring the lock will be automatically released when the block finishes, even if an exception occurs:
@@ -74,14 +82,6 @@ SimpleLock.lock("my_unique_lock_key", 30) do |locked|
     puts "Failed to acquire lock."
   end
 end
-```
-
-### Unlocking
-
-You can manually release the lock using the `unlock` method:
-
-```ruby
-SimpleLock.unlock("my_unique_lock_key")
 ```
 
 ## Configuration
