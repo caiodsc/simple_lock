@@ -95,7 +95,7 @@ SimpleLock.config.key_prefix = "simple_lock:"
 SimpleLock.config.retry_count = 3
 SimpleLock.config.retry_delay = 200 # in milliseconds
 SimpleLock.config.retry_jitter = 50 # in milliseconds
-SimpleLock.config.retry_proc = Proc.new { |attempt| attempt * 100 }
+SimpleLock.config.retry_proc = Proc.new { |attempt| attempt * 100 } # Optional
 ```
 
 ## Features
