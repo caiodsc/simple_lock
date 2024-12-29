@@ -1,7 +1,7 @@
 
 # SimpleLock
 
-**SimpleLock** is a simple implementation of distributed locking using **Ruby** and **Redis**, designed to prevent deadlocks and ensure that concurrent processes can be managed efficiently.
+**SimpleLock** is a blazing fast and lightweight implementation of distributed locking using **Ruby** and **Redis**. With zero external dependencies like `activesupport`, **SimpleLock** relies solely on the **redis** gem, making it extremely lean and compatible with any Ruby environment you’re working in.
 
 ## Installation
 
