@@ -31,6 +31,7 @@ module SimpleLock
     @config ||= Config.new
   end
 
+  # rubocop:disable Metrics/MethodLength
   def self.lock(key, ttl)
     key = "#{config.key_prefix}#{key}"
 
@@ -48,6 +49,7 @@ module SimpleLock
       unlock(key) if locked
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def self.unlock(key)
     key = "#{config.key_prefix}#{key}"

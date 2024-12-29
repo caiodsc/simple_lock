@@ -1,8 +1,21 @@
 AllCops:
   TargetRubyVersion: 2.7.0
+  NewCops: disable
+  SuggestExtensions: false
+  Include:
+    - lib/simple_lock.rb
+    - lib/simple_lock/*.rb
+    - spec/*.rb
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/*.rb
+
+Style/Documentation:
+  Enabled: false
