@@ -2,7 +2,7 @@
 
 require "set"
 
-class Module
+module SimpleLock::Delegation
   class DelegationError < NoMethodError; end
 
   RUBY_RESERVED_KEYWORDS = %w[__ENCODING__ __LINE__ __FILE__ alias and BEGIN begin break

@@ -2,6 +2,8 @@
 
 module SimpleLock
   class Redis
+    extend SimpleLock::Delegation
+
     def initialize(url: nil)
       @redis = ::Redis.new(url: url)
     end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "digest"
+
 module SimpleLock
   Script = Struct.new(:raw) do
     def sha

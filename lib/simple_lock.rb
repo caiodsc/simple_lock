@@ -1,23 +1,30 @@
 # frozen_string_literal: true
 
-require "digest"
-require "ostruct"
 require "redis"
 
 Dir["./lib/initializers/*.rb"].sort.each { |f| require(f) }
 Dir["./lib/simple_lock/*.rb"].sort.each { |f| require(f) }
 
 module SimpleLock
+  extend SimpleLock::With
+
   class Error < StandardError; end
 
-  NO_SCRIPT_MAX_RETRIES = 1
+  NOSCRIPT_MAX_RETRIES = 1
 
   def self.client
     @client ||= SimpleLock::Redis.new(url: nil)
   end
 
-  def self.client=(url)
-    @client = SimpleLock::Redis.new(url: url)
+  def self.client=(client_or_url)
+    case client_or_url
+    when SimpleLock::Redis
+      @client = client
+    when String
+      @client = SimpleLock::Redis.new(url: client_or_url)
+    else
+      raise ArgumentError, "client must be an instance of SimpleLock::Redis or a String"
+    end
   end
 
   def self.config
@@ -25,7 +32,7 @@ module SimpleLock
   end
 
   def self.lock(key, ttl)
-    key.prepend(config.key_prefix)
+    key = "#{config.key_prefix}#{key}"
 
     locked = (config.retry_count + 1).times.any? do |attempt|
       sleep(backoff_for_attempt(attempt)) unless attempt.zero?
@@ -43,7 +50,7 @@ module SimpleLock
   end
 
   def self.unlock(key)
-    key.prepend(config.key_prefix)
+    key = "#{config.key_prefix}#{key}"
 
     safe_exec_script(SCRIPTS[:unlock], [key])
   rescue StandardError
@@ -62,7 +69,7 @@ module SimpleLock
     begin
       client.evalsha(script.sha, ...)
     rescue ::Redis::CommandError => e
-      if e.message.include?("NOSCRIPT") && (retries += 1) <= NO_SCRIPT_MAX_RETRIES
+      if e.message.include?("NOSCRIPT") && (retries += 1) <= NOSCRIPT_MAX_RETRIES
         load_scripts
         retry
       end

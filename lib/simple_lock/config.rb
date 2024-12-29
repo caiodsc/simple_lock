@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require "ostruct"
+
 module SimpleLock
   class Config
+    extend SimpleLock::Delegation
+
     DEFAULT_CONFIG = OpenStruct.new(
       {
         retry_count: 3,
