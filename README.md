@@ -1,7 +1,7 @@
 
 # SimpleLock
 
-**SimpleLock** is a simple implementation of distributed locking using Ruby and Redis, designed to prevent deadlocks and ensure that concurrent processes can be managed efficiently.
+**SimpleLock** is a simple implementation of distributed locking using **Ruby** and **Redis**, designed to prevent deadlocks and ensure that concurrent processes can be managed efficiently.
 
 ## Installation
 
