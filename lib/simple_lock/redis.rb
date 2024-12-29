@@ -2,12 +2,10 @@
 
 module SimpleLock
   class Redis
-    attr_accessor :redis
-
-    def initialize(redis = ::Redis.new)
-      @redis = redis
+    def initialize(url: nil)
+      @redis = ::Redis.new(url: url)
     end
 
-    delegate_missing_to :redis, allow_nil: false
+    delegate_missing_to :@redis, allow_nil: false
   end
 end

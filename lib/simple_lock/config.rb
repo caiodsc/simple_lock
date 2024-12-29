@@ -2,8 +2,6 @@
 
 module SimpleLock
   class Config
-    attr_accessor :config
-
     DEFAULT_CONFIG = OpenStruct.new(
       {
         retry_count: 3,
@@ -18,7 +16,7 @@ module SimpleLock
       @config = DEFAULT_CONFIG
     end
 
-    delegate_missing_to :config, allow_nil: false
+    delegate_missing_to :@config, allow_nil: false
 
     def respond_to_missing?(method_name, ...)
       DEFAULT_CONFIG.table.keys.include?(method_name.to_s.delete_suffix("=").to_sym)

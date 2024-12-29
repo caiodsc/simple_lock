@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-require "active_support/core_ext/module/delegation"
-require "active_support/core_ext/object/blank"
-require "active_support/core_ext/object/try"
-
 require "digest"
 require "ostruct"
 require "redis"
 
+Dir["./lib/initializers/*.rb"].sort.each { |f| require(f) }
 Dir["./lib/simple_lock/*.rb"].sort.each { |f| require(f) }
 
 module SimpleLock
@@ -15,28 +12,25 @@ module SimpleLock
 
   NO_SCRIPT_MAX_RETRIES = 1
 
-  def self.redis
-    @redis ||= SimpleLock::Redis.new
+  def self.client
+    @client ||= SimpleLock::Redis.new(url: nil)
   end
 
-  def self.redis=(redis)
-    @redis = SimpleLock::Redis.new(redis)
+  def self.client=(url)
+    @client = SimpleLock::Redis.new(url: url)
   end
 
   def self.config
     @config ||= Config.new
   end
 
-  # @param [String] key
-  # @param [Integer] ttl
-  # @return [Class<StandardError>, TrueClass, FalseClass]
   def self.lock(key, ttl)
     key.prepend(config.key_prefix)
 
     locked = (config.retry_count + 1).times.any? do |attempt|
       sleep(backoff_for_attempt(attempt)) unless attempt.zero?
 
-      safe_exec_script(SCRIPTS[:lock], [key], ["true", ttl]).present?
+      safe_exec_script(SCRIPTS[:lock], [key], [ttl]) == "OK"
     end
 
     return locked unless block_given?
@@ -58,7 +52,7 @@ module SimpleLock
 
   def self.load_scripts
     SCRIPTS.each_value do |script|
-      redis.script("load", script.raw)
+      client.script("load", script.raw)
     end
   end
 
@@ -66,7 +60,7 @@ module SimpleLock
     retries = 0
 
     begin
-      redis.evalsha(script.sha, ...)
+      client.evalsha(script.sha, ...)
     rescue ::Redis::CommandError => e
       if e.message.include?("NOSCRIPT") && (retries += 1) <= NO_SCRIPT_MAX_RETRIES
         load_scripts
