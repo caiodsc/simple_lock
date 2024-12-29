@@ -75,11 +75,11 @@ You can configure various behaviors of the gem, such as the key prefix, retry co
 ### Example Configuration:
 
 ```ruby
-SimpleLock.config.key_prefix = "myapp:"
-SimpleLock.config.retry_count = 5
+SimpleLock.config.key_prefix = "simple_lock:"
+SimpleLock.config.retry_count = 3
 SimpleLock.config.retry_delay = 200 # in milliseconds
-SimpleLock.config.retry_jitter = 100 # in milliseconds
-SimpleLock.config.retry_proc = Proc.new { |attempt| attempt * 100 } # Exponential backoff
+SimpleLock.config.retry_jitter = 50 # in milliseconds
+SimpleLock.config.retry_proc = Proc.new { |attempt| attempt * 100 }
 ```
 
 ## Features
