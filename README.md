@@ -27,7 +27,7 @@ gem install simple_lock
 
 ### Client Configuration
 
-To use SimpleLock, you need to configure the Redis client. This can be done by setting the client directly:
+To use **SimpleLock**, you need to configure the Redis client. This can be done by setting the client directly:
 
 ```ruby
 SimpleLock.client = SimpleLock::Redis.new(url: "redis://localhost:6379/1")
