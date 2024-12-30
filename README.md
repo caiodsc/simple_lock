@@ -49,7 +49,7 @@ The main goal of **SimpleLock** is to provide a distributed locking mechanism. Y
 
 ```ruby
 # Using the simple lock with a key and expiration time (TTL)
-locked = SimpleLock.lock("my_unique_lock_key", 30)
+locked = SimpleLock.lock("my_unique_lock_key", 3000)
 
 if locked
   # Execute the critical operation
@@ -73,7 +73,7 @@ SimpleLock.unlock("my_unique_lock_key")
 You can also use **SimpleLock** with a block, ensuring the lock will be automatically released when the block finishes, even if an exception occurs:
 
 ```ruby
-SimpleLock.lock("my_unique_lock_key", 30) do |locked|
+SimpleLock.lock("my_unique_lock_key", 3000) do |locked|
   if locked
     # Critical operation
     puts "Safe operation is running."
